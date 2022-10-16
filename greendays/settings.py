@@ -84,14 +84,13 @@ WSGI_APPLICATION = 'greendays.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': 'greendays',
-        'USER': 'ndiritu',
-        'PASSWORD': config.get("DATABASE_PASSWORD",'ndiritu'),
-        'HOST': config.get("DATABASE_URL",'localhost'),
+        'NAME': config.get("DATABASE_NAME"),
+        'USER': config.get("DATABASE_USER"),
+        'PASSWORD': config.get("DATABASE_PASSWORD"),
+        'HOST': config.get("DATABASE_URL"),
         'PORT': '5432',
     }
 }

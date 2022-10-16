@@ -1,6 +1,8 @@
 {
     "DATABASE_URL": "localhost",
     "DATABASE_PASSWORD": "ndiritu",
+    "DATABASE_USER": "ndiritu",
+    "DATABASE_NAME": "greendays",
     "AWS_S3_ACCESS_KEY_ID": "AKIAW5EJGFNDXXUM66XK",
     "AWS_S3_SECRET_ACCESS_KEY": "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",
     "AWS_STORAGE_BUCKET_NAME": "greendays",

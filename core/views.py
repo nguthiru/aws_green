@@ -1,13 +1,13 @@
 from django.http import Http404
 from django.shortcuts import get_object_or_404, render
 from rest_framework.viewsets import ModelViewSet
-from core.models import Campaign, CampaignInvolvement, RecycleArea, Report, TreeShop
+from core.models import Campaign, CampaignInvolvement, RecycleArea, Report, Rewards, Tree, TreeOrder, TreeShop
 from django.contrib.gis.measure import D
-from core.serializers import CampaignInvolvementSerializer, CampaignSerializer, CampaignSerializerDetail, RecycleAreaSeriailizer, ReportSerializer, TreeShopSerializer, TreeShopSerializerDetail
+from core.serializers import CampaignInvolvementSerializer, CampaignSerializer, CampaignSerializerDetail, RecycleAreaSeriailizer, ReportSerializer, TreeOrderSerializer, TreeShopSerializer, TreeShopSerializerDetail
 from django.contrib.gis.geos import Point
 from django.contrib.gis.geos import GEOSGeometry
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, action
 # Create your views here.
 
 
@@ -59,6 +59,45 @@ def location_campaign(request):
         return Response(location_error_text, status=400)
 
 
+class TreeOrderViewSet(ModelViewSet):
+    serializer_class = TreeOrderSerializer
+
+    def get_queryset(self):
+        return TreeOrder.objects.filter(user=self.request.user, complete=False)
+
+    def create(self, request, *args, **kwargs):
+        data = request.data
+        if 'quantity' in data and 'longitude' in data and 'latitude' in data and 'tree' in data:
+            quantity = data['quantity']
+            longitude = float(data['longitude'])
+            latitude = float(data['latitude'])
+            location = Point((longitude, latitude))
+            tree = get_object_or_404(Tree, id=data['tree'])
+
+            tree_order, created = TreeOrder.objects.get_or_create(tree=tree, quantity=quantity,
+                                                                  location=location, user=request.user)
+            if not created:
+                tree_order.quantity += int(quantity)
+                tree_order.save()
+
+            serial = TreeOrderSerializer(tree_order)
+
+            # Reward user
+            reward, _ = Rewards.objects.get_or_create(user=request.user)
+            reward.points += int((int(quantity) ^ 2)/2)
+            reward.save()
+
+            return Response(serial.data, status=201)
+        else:
+            return Response('Some fields are missing', status=400)
+
+    @action(['GET'], detail=False)
+    def completed(self, request, *args, **kwargs):
+        qs = TreeOrder.objects.filter(user=request.user, complete=True)
+
+        return Response(TreeOrderSerializer(qs, many=True).data)
+
+
 class TreeShopViewSet(ModelViewSet):
 
     serializer_class = TreeShopSerializer
@@ -100,7 +139,7 @@ def involve_campaign(request, id):
 
     involvement = CampaignInvolvement(user=request.user, campaign=campaign)
 
-    serializer = CampaignInvolvementSerializer(involvement,data=request.data)
+    serializer = CampaignInvolvementSerializer(involvement, data=request.data)
 
     if serializer.is_valid():
         serializer.save()

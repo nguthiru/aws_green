@@ -6,9 +6,9 @@ User = get_user_model()
 
 
 class Rewards(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    points = models.PositiveIntegerField()
-    activity = models.TextField()
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    points = models.PositiveIntegerField(default=2)
+    # activity = models.TextField()
 
     def __str__(self) -> str:
         return f"{self.user.username} - {self.points}"
@@ -34,6 +34,18 @@ class Tree(models.Model):
         return self.name
 
 
+class TreeOrder(models.Model):
+    tree = models.ForeignKey(Tree, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=1)
+    location = models.PointField()
+    date_added = models.DateTimeField(auto_now_add=True)
+    complete = models.BooleanField(default=False)
+
+    def __str__(self) -> str:
+        return self.tree.name
+
+
 class RecycleArea(models.Model):
     name = models.CharField(max_length=255)
     location = models.PointField()
@@ -47,6 +59,7 @@ class Report(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     date_added = models.DateTimeField(auto_now_add=True)
     text = models.TextField()
+    location = models.PointField(null=True,blank=True)
 
     def __str__(self) -> str:
         return self.user.username
@@ -67,4 +80,4 @@ class CampaignInvolvement(models.Model):
     date_involved = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        unique_together = ('user','campaign')
+        unique_together = ('user', 'campaign')

@@ -11,4 +11,4 @@ class LocationModelAdmin(geo_admin.OSMGeoAdmin):
 
 admin.site.register([TreeShop, RecycleArea,
                     Campaign, ], LocationModelAdmin)
-admin.site.register([CampaignInvolvement])
+admin.site.register([CampaignInvolvement,Tree,TreeOrder])

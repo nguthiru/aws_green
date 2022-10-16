@@ -11,11 +11,13 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
-
+import os
+import json
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
+with open('/etc/greenday.json') as f:
+    config = json.load(f)
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
@@ -42,6 +44,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'rest_auth',
     'rest_framework_gis',
+    'storages',
 
     #third-party
     'accounts',
@@ -82,14 +85,13 @@ WSGI_APPLICATION = 'greendays.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': 'greendays',
         'USER': 'ndiritu',
-        'PASSWORD': 'ndiritu',
-        'HOST': 'localhost',
+        'PASSWORD': config.get("DATABASE_PASSWORD",'ndiritu'),
+        'HOST': config.get("DATABASE_URL",'localhost'),
         'PORT': '5432',
     }
 }
@@ -137,9 +139,13 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
-
 STATIC_URL = '/static/'
-
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+AWS_S3_ACCESS_KEY_ID = config.get("AWS_S3_ACCESS_KEY_ID")
+AWS_S3_SECRET_ACCESS_KEY = config.get("AWS_S3_SECRET_ACCESS_KEY")
+AWS_STORAGE_BUCKET_NAME = config.get("AWS_STORAGE_BUCKET_NAME")
+AWS_S3_REGION_NAME = config.get("AWS_S3_REGION_NAME")  # change to your region
+AWS_S3_SIGNATURE_VERSION = config.get("AWS_S3_SIGNATURE_VERSION")
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 

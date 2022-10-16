@@ -22,6 +22,12 @@ class TreeSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class TreeOrderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TreeOrder
+        fields = '__all__'
+
+
 class TreeShopSerializerDetail(GeoModelSerializer):
     trees = serializers.SerializerMethodField('get_trees')
 
@@ -59,7 +65,8 @@ class CampaignInvolvementSerializer(serializers.ModelSerializer):
     class Meta:
         model = CampaignInvolvement
         fields = '__all__'
-        extra_kwargs = {'user':{'required':False},'campaign':{'required':False}}
+        extra_kwargs = {'user': {'required': False},
+                        'campaign': {'required': False}}
 
 
 class CampaignSerializerDetail(GeoModelSerializer):

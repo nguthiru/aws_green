@@ -109,7 +109,7 @@ class TreeShopViewSet(ModelViewSet):
         if self.action == 'retrieve':
             return TreeShopSerializerDetail
         else:
-            super().get_serializer_class()
+            return super(TreeShopViewSet,self).get_serializer_class()
 
 
 class RecycleAreaViewSet(ModelViewSet):
@@ -130,7 +130,7 @@ class CampaignViewSet(ModelViewSet):
         if self.action == 'retrieve':
             return CampaignSerializerDetail
         else:
-            super().get_serializer_class()
+            return super().get_serializer_class()
 
 
 @api_view(['GET'])

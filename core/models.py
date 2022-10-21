@@ -30,6 +30,7 @@ class Tree(models.Model):
     name = models.CharField(max_length=255)
     image = models.ImageField(upload_to='trees')
     date_uploaded = models.DateField(auto_now_add=True)
+    price = models.FloatField(default=100)
 
     def __str__(self) -> str:
         return self.name

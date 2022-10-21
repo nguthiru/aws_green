@@ -24,7 +24,7 @@ class TreeSerializer(serializers.ModelSerializer):
 
 
 class TreeOrderSerializer(serializers.ModelSerializer):
-    
+    tree = TreeSerializer()
     class Meta:
         model = TreeOrder
         fields = '__all__'

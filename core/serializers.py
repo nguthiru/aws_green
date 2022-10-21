@@ -17,12 +17,14 @@ class TreeShopSerializer(GeoModelSerializer):
 
 
 class TreeSerializer(serializers.ModelSerializer):
+    category = serializers.CharField(source='get_category_display')
     class Meta:
         model = Tree
         fields = '__all__'
 
 
 class TreeOrderSerializer(serializers.ModelSerializer):
+    
     class Meta:
         model = TreeOrder
         fields = '__all__'

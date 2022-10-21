@@ -74,7 +74,6 @@ class TreeOrderViewSet(ModelViewSet):
             location = Point((longitude, latitude))
             tree = get_object_or_404(Tree, id=data['tree'])
 
-            tree_order, created = TreeOrder.objects.get_or_create(tree=tree,user=request.user)
             try:
                 tree_order = TreeOrder.objects.get(tree=tree,user=request.user)
                 tree_order.quantity += quantity

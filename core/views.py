@@ -68,20 +68,23 @@ class TreeOrderViewSet(ModelViewSet):
     def create(self, request, *args, **kwargs):
         data = request.data
         if 'quantity' in data and 'longitude' in data and 'latitude' in data and 'tree' in data:
-            quantity = data['quantity']
+            quantity = data.get('quantity',1)
             longitude = float(data['longitude'])
             latitude = float(data['latitude'])
             location = Point((longitude, latitude))
             tree = get_object_or_404(Tree, id=data['tree'])
 
             tree_order, created = TreeOrder.objects.get_or_create(tree=tree,user=request.user)
-
-            tree_order.quantity = quantity
-            tree_order.location = location
-            if not created:
-                tree_order.quantity += int(quantity)
+            try:
+                tree_order = TreeOrder.objects.get(tree=tree,user=request.user)
+                tree_order.quantity += quantity
+                tree_order.location = location
                 tree_order.save()
+            except TreeOrder.DoesNotExist:
+                tree_order = TreeOrder.objects.create(tree,user=request.user,location=location)
 
+
+            
             serial = TreeOrderSerializer(tree_order)
 
             # Reward user

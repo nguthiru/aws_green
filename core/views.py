@@ -80,7 +80,7 @@ class TreeOrderViewSet(ModelViewSet):
                 tree_order.location = location
                 tree_order.save()
             except TreeOrder.DoesNotExist:
-                tree_order = TreeOrder.objects.create(tree,user=request.user,location=location)
+                tree_order = TreeOrder.objects.create(tree=tree,user=request.user,location=location)
 
 
             

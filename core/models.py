@@ -1,4 +1,5 @@
 from email.policy import default
+from unicodedata import category
 from django.db import models
 from django.contrib.gis.db import models
 from django.contrib.auth import get_user_model
@@ -31,6 +32,7 @@ class Tree(models.Model):
     image = models.ImageField(upload_to='trees')
     date_uploaded = models.DateField(auto_now_add=True)
     price = models.FloatField(default=100)
+    category = models.CharField(max_length=2,choices=(('H','Hardwood'),('S','Softwood')),default='S')
 
     def __str__(self) -> str:
         return self.name

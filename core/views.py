@@ -1,9 +1,9 @@
 from django.http import Http404
 from django.shortcuts import get_object_or_404, render
 from rest_framework.viewsets import ModelViewSet
-from core.models import Campaign, CampaignInvolvement, RecycleArea, Report, Rewards, Tree, TreeOrder, TreeShop
+from core.models import Campaign, CampaignInvolvement, RecycleArea, RecycleCall, Report, Rewards, Tree, TreeOrder, TreeShop
 from django.contrib.gis.measure import D
-from core.serializers import CampaignInvolvementSerializer, CampaignSerializer, CampaignSerializerDetail, RecycleAreaSeriailizer, ReportSerializer, TreeOrderSerializer, TreeShopSerializer, TreeShopSerializerDetail
+from core.serializers import CampaignInvolvementSerializer, CampaignSerializer, CampaignSerializerDetail, RecycleAreaSeriailizer, RecycleCallSerializer, ReportSerializer, TreeOrderSerializer, TreeShopSerializer, TreeShopSerializerDetail
 from django.contrib.gis.geos import Point
 from django.contrib.gis.geos import GEOSGeometry
 from rest_framework.response import Response
@@ -119,6 +119,23 @@ class RecycleAreaViewSet(ModelViewSet):
     def get_queryset(self):
         return RecycleArea.objects.all()
 
+    @action(methods=['POST'],detail=False)
+    def call(self,request,*args,**kwargs):
+        data = request.data
+        area = data.get('area')
+        Area = get_object_or_404(RecycleArea,id=area)
+        longitude = float(data.get('longitude'))
+        latitude = float(data.get('latitude'))
+        user = request.user
+        point = Point((longitude,latitude))
+
+        call = RecycleCall.objects.create(area=Area,location=point,user=user)
+        return Response(RecycleCallSerializer(call).data,status=201)
+
+    
+
+
+    
 
 class CampaignViewSet(ModelViewSet):
     serializer_class = CampaignSerializer

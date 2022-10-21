@@ -46,6 +46,10 @@ class RecycleAreaSeriailizer(GeoModelSerializer):
         model = RecycleArea
         fields = '__all__'
 
+class RecycleCallSerializer(GeoModelSerializer):
+    class Meta:
+        model = RecycleCall
+        fields = '__all__'
 
 class ReportSerializer(serializers.ModelSerializer):
 

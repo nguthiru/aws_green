@@ -1,3 +1,4 @@
+from email.policy import default
 from django.db import models
 from django.contrib.gis.db import models
 from django.contrib.auth import get_user_model
@@ -50,10 +51,23 @@ class RecycleArea(models.Model):
     name = models.CharField(max_length=255)
     location = models.PointField()
     description = models.TextField()
+    waste_type = models.CharField(max_length=1,choices=(('P','Plastics'),('A','All')),default='P')
 
     def __str__(self) -> str:
         return self.name
 
+class RecycleCall(models.Model):
+    area = models.ForeignKey(RecycleArea,on_delete=models.CASCADE)
+    location = models.PointField()
+    user = models.ForeignKey(User,on_delete=models.CASCADE,null=True,blank=True)
+    date_ordered = models.DateTimeField(auto_now_add=True)
+
+    completed = models.BooleanField(default=False)
+
+    comments = models.TextField(null=True)
+
+    def __str__(self) -> str:
+        return self.area.name
 
 class Report(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

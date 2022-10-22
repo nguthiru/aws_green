@@ -177,10 +177,9 @@ class ReportViewSet(ModelViewSet):
         return Report.objects.all()
 
     def create(self, request, *args, **kwargs):
-
         report = Report(user=request.user)
 
-        serial = ReportSerializer(report, **request.data)
+        serial = ReportSerializer(report, request.data)
         if serial.is_valid():
             serial.save()
             return Response('Your report has been received', 200)
